@@ -25,6 +25,7 @@
 <script>
 import randNum from "../utils/randNum";
 // import getToken from "../utils/getToken";
+import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -42,7 +43,13 @@ export default {
     // 生成随机数用于验证
     this.checkNum();
   },
+  computed: {
+    ...mapState({
+      token: (state) => state.user.token,
+    }),
+  },
   methods: {
+    ...mapMutations(["updateToken"]),
     // 表单校验
     checkForm() {
       if (!this.username) {
@@ -81,11 +88,18 @@ export default {
     login() {
       // 先进行表单验证
       if (this.checkForm()) {
-        console.log("登录成功");
-        // console.log(this.$store.state.token);
-        // console.log("哈哈", getToken());
-        this.post("api/login", { username: this.username }).then((res) => {
-          console.log(res);
+        this.post("api/login", {
+          username: this.username,
+          password: this.password,
+        }).then((res) => {
+          if (res.code === 200) {
+            // 登录成功
+            // 将token存储在localSTorage中
+            localStorage.setItem("token", res.data.token);
+            // 将token提交到vuex中
+            // this["user/updateToken"(res.data.token)];
+            this.updateToken(res.data.token);
+          }
         });
       }
     },
