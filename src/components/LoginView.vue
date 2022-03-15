@@ -99,6 +99,8 @@ export default {
             // 将token提交到vuex中
             // this["user/updateToken"(res.data.token)];
             this.updateToken(res.data.token);
+            // 跳转至home
+            this.$router.push({ path: "/home" });
           }
         });
       }

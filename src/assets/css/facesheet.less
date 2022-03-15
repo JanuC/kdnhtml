@@ -1,0 +1,63 @@
+.faceSheet {
+  width: 100%;
+  height: 100%;
+  .faceSheetTitle {
+    width: 100%;
+    height: 0.4rem;
+    line-height: 0.4rem;
+  }
+  .faceSheetMain {
+    ul {
+      width: 100%;
+      li {
+        width: 100%;
+        height: 1rem;
+        background-color: #ffffff;
+        margin: 0.1rem 0;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        font-size: 0.14rem;
+        // text-align: left;
+        .orderMsg {
+          width: 100%;
+          display: flex;
+          div {
+            flex: 1;
+          }
+          .goodsMsg {
+            flex: 3;
+          }
+        }
+        .orderTitle {
+          height: 20%;
+          line-height: 0.2rem;
+          font-weight: 700;
+          font-size: 0.12rem;
+          background-color: pink;
+          text-align: left;
+          span {
+            margin: 0 0.2rem;
+          }
+        }
+        .orderMain {
+          width: 100%;
+          height: 80%;
+          display: flex;
+          div {
+            flex: 1;
+          }
+          .goodsMsg {
+            // box-sizing: border-box;
+            flex: 3;
+            // padding: 0.1rem;
+          }
+        }
+      }
+      li:first-child {
+        height: 0.3rem;
+        font-weight: 700;
+        line-height: 0.3rem;
+      }
+    }
+  }
+}

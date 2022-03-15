@@ -18,11 +18,12 @@ axios.defaults.timeout = 3000;
 axios.interceptors.request.use(
   (req) => {
     // 请求拦截处理
-    console.log("请求拦截", req);
+    // console.log("请求拦截", req);
     // 设置 token
     const token = getToken();
+    // console.log(token);
     if (token) {
-      req.headers.common["Authorization"] = "Bear " + token;
+      req.headers.common["Authorization"] = token;
     }
     return req;
   },
