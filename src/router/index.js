@@ -4,6 +4,7 @@ import checkToken from "../utils/checkToken";
 import HomeView from "../components/HomeView.vue";
 import LoginView from "../components/LoginView.vue";
 import FaceSheetView from "../components/FaceSheet.vue";
+import store from "../store/index";
 
 Vue.use(VueRouter);
 
@@ -49,7 +50,9 @@ router.beforeEach((to, from, next) => {
       if (res.code === 200) {
         next();
       } else {
-        // console.log(this);
+        store.state.user.token = null;
+        // 移除 token
+        localStorage.removeItem("token");
         router.push({ path: "/login" });
       }
     });
