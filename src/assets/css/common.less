@@ -2,7 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
+  // height: 100%;
   font-size: 100px;
 }
 ul,li,img {
@@ -21,11 +21,32 @@ p {
   text-align: center;
   color: #2c3e50;
   width: 100%;
-  height: 100%;
+  // height: 100%;
   background-color: #eee;
   font-size: 0.18rem;
   // overflow-y: hidden;
 }
 .el-message {
   font-size: 0.18rem;
+}
+// 订单状态配色表
+// 已完成
+.orderOver {
+  background-color: #99CC33;
+}
+// 已支付订单
+.orderSuccess {
+  background-color: #99CC66;
+}
+// 未支付订单
+.orderError {
+  background-color: #FF6666;
+}
+// 已取消订单
+.orderCancel {
+  background-color: #ccc;
+}
+// 交易关闭
+.orderClose {
+  background-color: #999;
 }

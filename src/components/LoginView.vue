@@ -79,6 +79,7 @@ export default {
           message: "输入结果不正确",
           duration: 800,
         });
+        this.sum = null;
         return false;
       } else {
         return true;
@@ -101,6 +102,14 @@ export default {
             this.updateToken(res.data.token);
             // 跳转至home
             this.$router.push({ path: "/home" });
+          } else {
+            this.$message({
+              type: "error",
+              message: "密码错误，请重新输入",
+              duration: 800,
+            });
+            this.password = this.sum = null;
+            this.checkNum();
           }
         });
       }
