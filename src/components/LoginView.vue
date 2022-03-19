@@ -101,7 +101,14 @@ export default {
             // this["user/updateToken"(res.data.token)];
             this.updateToken(res.data.token);
             // 跳转至home
-            this.$router.push({ path: "/home" });
+            this.$router.push({
+              path: "/home/faceSheet",
+              query: {
+                pageSize: 10,
+                currentPage: 1,
+                selectLabel: "全部",
+              },
+            });
           } else {
             this.$message({
               type: "error",

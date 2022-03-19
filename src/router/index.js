@@ -4,6 +4,7 @@ import checkToken from "../utils/checkToken";
 import HomeView from "../components/HomeView.vue";
 import LoginView from "../components/LoginView.vue";
 import FaceSheetView from "../components/FaceSheet.vue";
+import FaceMessage from "../components/FaceMessage.vue";
 import store from "../store/index";
 
 Vue.use(VueRouter);
@@ -25,6 +26,10 @@ const routes = [
         path: "/home/facesheet",
         component: FaceSheetView,
       },
+      {
+        path: "/home/facemessage",
+        component: FaceMessage,
+      },
     ],
   },
   {
@@ -33,6 +38,12 @@ const routes = [
     component: LoginView,
   },
 ];
+
+// 解决ElementUI导航栏中重复点菜单报错问题
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch((err) => err);
+};
 
 const router = new VueRouter({
   mode: "history",

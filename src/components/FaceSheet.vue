@@ -1,11 +1,15 @@
 <template>
   <div class="faceSheet">
     <div class="faceSheetTitle">
-      <div class="refreshBox">
+      <div class="refreshBox" @click="refreshPage">
         <el-button class="refreshButton" icon="el-icon-refresh"></el-button>
       </div>
       <div class="selectBox">
-        <el-radio-group v-model="selectLabel" class="selectRadio">
+        <el-radio-group
+          v-model="selectLabel"
+          class="selectRadio"
+          @change="checkSelect"
+        >
           <el-radio-button label="全部"></el-radio-button>
           <el-radio-button label="未支付"></el-radio-button>
           <el-radio-button label="已支付"></el-radio-button>
@@ -22,6 +26,7 @@
           v-model="selectInput"
           placeholder="订单号/收件人/电话号码"
         ></el-input>
+        <el-button class="elButton" type="warning">筛选</el-button>
       </div>
     </div>
     <div class="faceSheetMain">
@@ -59,7 +64,7 @@
             <span>订单号：{{ item.order_sn }}</span>
             <span>下单时间：{{ timeFormate(item.createtime) }}</span>
             <span>
-              {{ item.type === "goods" ? "商城订单" : "积分订单" }}
+              {{ item.type === "goods" ? "App-商城订单" : "积分订单" }}
             </span>
           </div>
           <div class="orderMain">
@@ -148,6 +153,18 @@
         </li>
       </ul>
     </div>
+    <div class="pageBox">
+      <el-pagination
+        :page-sizes="pageSize"
+        :page-size="currentPageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="ordersTotal"
+        :current-page.sync="currentPage"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -156,14 +173,29 @@ import { mapMutations, mapGetters } from "vuex";
 export default {
   data() {
     return {
+      // 当前显示的订单
       showOrderList: null,
+      // 切换不同状态的
       selectLabel: "全部",
+      // 通过订单号之类删选订单
       selectInput: null,
+      // 所有订单总数
+      ordersTotal: null,
+      // 可供选择的每页显示条数
+      pageSize: [10, 20, 50, 100],
+      // 每页显示条数 默认为10条
+      currentPageSize: 10,
+      // 当前显示页的页码 默认为1
+      currentPage: 1,
     };
   },
   mounted() {
     this.getAllOrders();
     this.getGoodsMsg();
+    // 将组件中的信息和参数相匹配
+    this.currentPage = parseInt(this.$route.query.currentPage);
+    this.currentPageSize = parseInt(this.$route.query.pageSize);
+    this.selectLabel = this.$route.query.selectLabel;
   },
   computed: {
     ...mapGetters({
@@ -181,8 +213,15 @@ export default {
           // 获取数据成功
           // 将数据提交到 vuex
           this.updateAllOrders(res.data);
+          const resultArray = this.changePages(
+            this.currentPageSize,
+            this.currentPage,
+            this.selectLabel
+          );
+          this.showOrderList = resultArray[0];
+          this.ordersTotal = resultArray[1];
           // console.log(this.$store.getters.getAllOrders);
-          this.showOrderList = res.data;
+          // this.showOrderList = res.data;
         }
       });
     },
@@ -198,6 +237,7 @@ export default {
     },
     // 每一个商品信息
     getOneGood(id) {
+      // console.log(id);
       const allGoodsList = this.allGoodsList;
       const res = allGoodsList.filter((v) => {
         return v.order_id == id;
@@ -235,6 +275,79 @@ export default {
       } else {
         return true;
       }
+    },
+    // 切换每页显示的条目数
+    handleSizeChange(num) {
+      const params = this.getRouterParams();
+      this.$router.push({
+        path: "/home/faceSheet",
+        query: {
+          pageSize: num,
+          currentPage: 1,
+          selectLabel: params.selectLabel,
+        },
+      });
+      this.currentPage = 1;
+    },
+    // 切换当前显示的页数
+    handleCurrentChange(pages) {
+      const params = this.getRouterParams();
+      this.$router.push({
+        path: "/home/faceSheet",
+        query: {
+          pageSize: params.pageSize,
+          currentPage: pages,
+          selectLabel: params.selectLabel,
+        },
+      });
+      // console.log("sss", this.showOrderList);
+    },
+    // 切换选中框
+    checkSelect(selectVal) {
+      const params = this.getRouterParams();
+      this.$router.push({
+        path: "/home/faceSheet",
+        query: {
+          pageSize: params.pageSize,
+          currentPage: 1,
+          selectLabel: selectVal,
+        },
+      });
+      this.currentPage = 1;
+    },
+    // 获取路由中的所有参数
+    getRouterParams() {
+      const params = this.$route.query;
+      return params;
+    },
+    // 左上角刷新功能
+    refreshPage() {
+      this.getAllOrders();
+      // const params = this.getRouterParams();
+      // console.log(params);
+      // this.$router.push({
+      //   path: "/home/faceSheet",
+      //   query: {
+      //     pageSize: params.pageSize,
+      //     currentPage: params.currentPage,
+      //     selectLabel: params.selectLabel,
+      //   },
+      // });
+    },
+  },
+  watch: {
+    $route() {
+      const currentpageSize = parseInt(this.$route.query.pageSize);
+      const currentPage = parseInt(this.$route.query.currentPage);
+      const selectLabel = this.$route.query.selectLabel;
+      // console.log(currentpageSize, currentPage, selectLabel);
+      const results = this.changePages(
+        currentpageSize,
+        currentPage,
+        selectLabel
+      );
+      this.showOrderList = results[0];
+      this.ordersTotal = results[1];
     },
   },
 };

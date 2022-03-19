@@ -6,9 +6,11 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import { apiAddress } from "./request/api";
 import timeFormate from "./utils/timeFormate";
+import changePages from "./utils/changePages";
 
 Vue.prototype.post = apiAddress;
 Vue.prototype.timeFormate = timeFormate;
+Vue.prototype.changePages = changePages;
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
