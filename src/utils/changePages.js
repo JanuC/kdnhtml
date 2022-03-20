@@ -5,11 +5,19 @@
  * 每页显示条数，当前页
  */
 import store from "../store/index";
-function changePages(length, currentPages, orderStatus) {
+import inputFilterOrder from "./inputFilterOrder";
+function changePages(length, currentPages, orderStatus, inputFilterStr) {
   // console.log(length, currentPages, orderStatus);
+  let allOrdersList = null;
+  if (inputFilterStr) {
+    // console.log(1);
+    allOrdersList = inputFilterOrder(inputFilterStr);
+  } else {
+    // console.log(2);
+    allOrdersList = store.getters.getAllOrders;
+  }
   const start = (currentPages - 1) * length;
   const end = currentPages * length;
-  const allOrdersList = store.getters.getAllOrders;
   // 订单状态
   let orderStatusNum = null;
   // 当前页面选中的状态
@@ -52,15 +60,15 @@ function changePages(length, currentPages, orderStatus) {
     selectOrdersLength = allOrdersList.length;
   } else {
     if (orderStatusNum === 2) {
-      const result = selectExpress(0);
+      const result = selectExpress(0, inputFilterStr);
       currentOrders = result[0].slice(start, end);
       selectOrdersLength = result[1];
     } else if (orderStatusNum === 3) {
-      const result = selectExpress(1);
+      const result = selectExpress(1, inputFilterStr);
       currentOrders = result[0].slice(start, end);
       selectOrdersLength = result[1];
     } else if (orderStatusNum === 4) {
-      const result = selectExpress(2);
+      const result = selectExpress(2, inputFilterStr);
       currentOrders = result[0].slice(start, end);
       selectOrdersLength = result[1];
     } else {
@@ -75,9 +83,16 @@ function changePages(length, currentPages, orderStatus) {
 }
 
 // 该 方法 用于筛选未发货、已发货、已完成订单
-function selectExpress(num) {
+function selectExpress(num, inputFilterStr) {
   const selectExpressList = store.getters.getAllGoods;
-  const allOrdersList = store.getters.getAllOrders;
+  let allOrdersList = null;
+  if (inputFilterStr) {
+    // console.log(1);
+    allOrdersList = inputFilterOrder(inputFilterStr);
+  } else {
+    // console.log(2);
+    allOrdersList = store.getters.getAllOrders;
+  }
   // 只在已支付的订单中筛选
   const payOrderList = allOrdersList.filter((v1) => {
     return v1.status === 2;

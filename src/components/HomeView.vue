@@ -18,9 +18,10 @@
                       pageSize: 10,
                       currentPage: 1,
                       selectLabel: '全部',
+                      inputFilterStr: 'null',
                     },
                   }"
-                  :class="{ 'is-active': $route.path === '/home/faceSheet' }"
+                  :class="{ 'is-active': $route.path == '/home/faceSheet' }"
                 >
                   打印面单
                 </el-menu-item>

@@ -1,0 +1,89 @@
+.printFaceSheet {
+  width: 6rem;
+  font-size: 0.14rem;
+  background-color: #eea;
+  // margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.2rem;
+  box-sizing: border-box;
+  // border: 1px solid #ccc;
+  border-radius: 0.2rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  header {
+    flex: 1;
+    max-height: 0.4rem;
+    line-height: 0.4rem;
+    font-size: 0.18rem;
+  }
+  main {
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    color: #666;
+    .el-input {
+      width: 70%;
+      vertical-align: top;
+      height: 0.3rem;
+      /deep/ .el-input__inner {
+        height: 0.3rem;
+        line-height: 0.2rem;
+      }
+    }
+    .title {
+      color: #333;
+      font-size: 0.16rem;
+      .buttonBox {
+        display: inline-block;
+        width: 80%;
+        text-align: right;
+        // text-align: right;
+      }
+    }
+    .sendMessage {
+      flex: 1;
+      padding: 0.1rem;
+      border: 1px solid #FF6666;
+      .sendName, .sendPhone, .sendAddress {
+        height: 0.4rem;
+        line-height: 0.4rem;
+        position: relative;
+      }
+    }
+    .consigneeMessage {
+      flex: 1;
+      margin-top: 0;
+      padding: 0.1rem;
+      border: 1px solid #FF6666;
+      border-top: none;
+      border-bottom: none;
+      .consigneeName, .consigneePhone, .consigneeAddress {
+        height: 0.4rem;
+        line-height: 0.4rem;
+        position: relative;
+      }
+    }
+    .commodityMessage {
+      flex: 1;
+      padding: 0.1rem;
+      border: 1px solid #FF6666;
+      ul {
+        li {
+          height: 0.2rem;
+          margin: 0.1rem 0;
+        }
+      }
+    }
+  }
+  footer {
+    margin-top: 0.1rem;
+    flex: 1;
+    max-height: 0.4rem;
+    text-align: right;
+  }
+}

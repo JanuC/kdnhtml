@@ -1,9 +1,9 @@
 <template>
   <div class="faceSheet">
     <div class="faceSheetTitle">
-      <div class="refreshBox" @click="refreshPage">
-        <el-button class="refreshButton" icon="el-icon-refresh"></el-button>
-      </div>
+      <!-- <div class="refreshBox" @click="refreshPage">
+        <el-button class="refreshButton">取消筛选</el-button>
+      </div> -->
       <div class="selectBox">
         <el-radio-group
           v-model="selectLabel"
@@ -26,7 +26,12 @@
           v-model="selectInput"
           placeholder="订单号/收件人/电话号码"
         ></el-input>
-        <el-button class="elButton" type="warning">筛选</el-button>
+        <el-button class="elButton" type="warning" @click="filterOrders">
+          筛选
+        </el-button>
+        <el-button class="elButton" @click="cancelInputFilter">
+          取消
+        </el-button>
       </div>
     </div>
     <div class="faceSheetMain">
@@ -144,7 +149,11 @@
             </div>
             <div class="itemBox">
               <div class="operate">
-                <el-button type="success" :disabled="isDisabled(item.id)">
+                <el-button
+                  type="success"
+                  :disabled="isDisabled(item.id)"
+                  @click="printFaceSheet(item.id)"
+                >
                   打印面单
                 </el-button>
               </div>
@@ -165,12 +174,18 @@
       >
       </el-pagination>
     </div>
+    <div class="printBox" v-show="showFaceSheet">
+      <print-face-sheet></print-face-sheet>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapMutations, mapGetters } from "vuex";
+import PrintFaceSheet from "./PrintFaceSheet.vue";
+import formateOrderMessage from "../utils/formateOrderMessage";
 export default {
+  components: { PrintFaceSheet },
   data() {
     return {
       // 当前显示的订单
@@ -201,10 +216,15 @@ export default {
     ...mapGetters({
       allGoodsList: "getAllGoods",
       allOrdersList: "getAllOrders",
+      showFaceSheet: "getShowFaceSheet",
     }),
   },
   methods: {
-    ...mapMutations(["updateAllOrders", "updateAllGoods"]),
+    ...mapMutations([
+      "updateAllOrders",
+      "updateAllGoods",
+      "updateShowFaceSheet",
+    ]),
     // 获取所有订单
     getAllOrders() {
       this.post("api/getAllOrders").then((res) => {
@@ -285,6 +305,7 @@ export default {
           pageSize: num,
           currentPage: 1,
           selectLabel: params.selectLabel,
+          inputFilterStr: params.inputFilterStr,
         },
       });
       this.currentPage = 1;
@@ -298,6 +319,7 @@ export default {
           pageSize: params.pageSize,
           currentPage: pages,
           selectLabel: params.selectLabel,
+          inputFilterStr: params.inputFilterStr,
         },
       });
       // console.log("sss", this.showOrderList);
@@ -311,6 +333,7 @@ export default {
           pageSize: params.pageSize,
           currentPage: 1,
           selectLabel: selectVal,
+          inputFilterStr: params.inputFilterStr,
         },
       });
       this.currentPage = 1;
@@ -320,19 +343,52 @@ export default {
       const params = this.$route.query;
       return params;
     },
-    // 左上角刷新功能
-    refreshPage() {
-      this.getAllOrders();
-      // const params = this.getRouterParams();
-      // console.log(params);
-      // this.$router.push({
-      //   path: "/home/faceSheet",
-      //   query: {
-      //     pageSize: params.pageSize,
-      //     currentPage: params.currentPage,
-      //     selectLabel: params.selectLabel,
-      //   },
-      // });
+    // 按钮筛选功能
+    filterOrders(e) {
+      // 取消 button 焦点，使其恢复原状
+      e.target.blur();
+      if (this.selectInput) {
+        const params = this.getRouterParams();
+        this.$router.push({
+          path: "/home/faceSheet",
+          query: {
+            pageSize: params.pageSize,
+            currentPage: 1,
+            selectLabel: params.selectLabel,
+            inputFilterStr: this.selectInput,
+          },
+        });
+        this.currentPage = 1;
+      } else {
+        this.$message({
+          type: "error",
+          message: "请输入筛选内容",
+          duration: 800,
+        });
+      }
+    },
+    // 取消筛选功能
+    cancelInputFilter(e) {
+      // 取消 button 焦点，使其恢复原状
+      e.target.blur();
+      this.currentPageSize = 10;
+      this.currentPage = 1;
+      this.selectLabel = "全部";
+      this.selectInput = null;
+      this.$router.push({
+        path: "/home/faceSheet",
+        query: {
+          pageSize: this.currentPageSize,
+          currentPage: this.currentPage,
+          selectLabel: this.selectLabel,
+          inputFilterStr: this.selectInput,
+        },
+      });
+    },
+    // 打印电子面单功能
+    printFaceSheet(id) {
+      formateOrderMessage(id);
+      this.updateShowFaceSheet(true);
     },
   },
   watch: {
@@ -340,11 +396,13 @@ export default {
       const currentpageSize = parseInt(this.$route.query.pageSize);
       const currentPage = parseInt(this.$route.query.currentPage);
       const selectLabel = this.$route.query.selectLabel;
+      const inputFilterStr = this.$route.query.inputFilterStr;
       // console.log(currentpageSize, currentPage, selectLabel);
       const results = this.changePages(
         currentpageSize,
         currentPage,
-        selectLabel
+        selectLabel,
+        inputFilterStr
       );
       this.showOrderList = results[0];
       this.ordersTotal = results[1];

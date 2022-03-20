@@ -12,7 +12,15 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    redirect: "/home",
+    redirect: {
+      path: "/home/faceSheet",
+      query: {
+        pageSize: 10,
+        currentPage: 1,
+        selectLabel: "全部",
+        inputFilterStr: "null",
+      },
+    },
     name: "home",
     component: HomeView,
   },
@@ -20,14 +28,22 @@ const routes = [
     path: "/home",
     name: "home",
     component: HomeView,
-    redirect: "/home/facesheet",
+    redirect: {
+      path: "/home/faceSheet",
+      query: {
+        pageSize: 10,
+        currentPage: 1,
+        selectLabel: "全部",
+        inputFilterStr: "null",
+      },
+    },
     children: [
       {
-        path: "/home/facesheet",
+        path: "/home/faceSheet",
         component: FaceSheetView,
       },
       {
-        path: "/home/facemessage",
+        path: "/home/faceMessage",
         component: FaceMessage,
       },
     ],
