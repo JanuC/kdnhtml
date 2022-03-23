@@ -152,7 +152,7 @@
                 <el-button
                   type="success"
                   :disabled="isDisabled(item.id)"
-                  @click="printFaceSheet(item.id)"
+                  @click="printFaceSheet(item.id, item.order_sn)"
                 >
                   打印面单
                 </el-button>
@@ -174,8 +174,8 @@
       >
       </el-pagination>
     </div>
-    <div class="printBox" v-show="showFaceSheet">
-      <print-face-sheet></print-face-sheet>
+    <div class="printBox" v-if="showFaceSheet">
+      <print-face-sheet :sendPrintMessage="printMessage"></print-face-sheet>
     </div>
   </div>
 </template>
@@ -202,6 +202,8 @@ export default {
       currentPageSize: 10,
       // 当前显示页的页码 默认为1
       currentPage: 1,
+      // 打印面单需要的信息，传递给子组件
+      printMessage: null,
     };
   },
   mounted() {
@@ -386,8 +388,10 @@ export default {
       });
     },
     // 打印电子面单功能
-    printFaceSheet(id) {
-      formateOrderMessage(id);
+    printFaceSheet(id, order_sn) {
+      this.printMessage = formateOrderMessage(id);
+      this.printMessage.push(order_sn);
+      // console.log(this.printMessage);
       this.updateShowFaceSheet(true);
     },
   },

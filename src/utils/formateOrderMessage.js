@@ -10,19 +10,32 @@ function formateOrderMessage(id) {
   const printOrderMessage = allOrdersList.filter((V) => {
     return V.id === id;
   });
-  const printGoodMessage = allGoodsList.filter((v) => {
+  const goodsMessage = allGoodsList.filter((v) => {
     return v.order_id === id;
   });
   const sendMessage = {
-    name: printOrderMessage[0].consignee,
-    phone: printOrderMessage[0].phone,
-    province: printOrderMessage[0].province_name,
-    city: printOrderMessage[0].city_name,
-    area: printOrderMessage[0].area_name,
-    address: printOrderMessage[0].address,
+    Name: printOrderMessage[0].consignee,
+    Mobile: printOrderMessage[0].phone,
+    ProvinceName: printOrderMessage[0].province_name,
+    CityName: printOrderMessage[0].city_name,
+    ExpAreaName: printOrderMessage[0].area_name,
+    Address: printOrderMessage[0].address,
   };
-  console.log(sendMessage);
-  console.log(printGoodMessage);
+  // console.log(sendMessage);
+  // console.log(goodsMessage);
+  let printGoodsMessage = [];
+  goodsMessage.forEach((v) => {
+    printGoodsMessage.push(createObject(v.goods_title, v.goods_num));
+  });
+  // console.log(printGoodsMessage);
   // const commodityMessage = [];
+  return [sendMessage, printGoodsMessage];
+}
+// 该方法用于创建对象
+function createObject(goodName, goodNum) {
+  let o = new Object();
+  o.GoodsName = goodName;
+  o.Goodsquantity = goodNum;
+  return o;
 }
 export default formateOrderMessage;

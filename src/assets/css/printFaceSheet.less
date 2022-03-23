@@ -1,5 +1,5 @@
 .printFaceSheet {
-  width: 6rem;
+  width: 8rem;
   font-size: 0.14rem;
   background-color: #eea;
   // margin: 0 auto;
@@ -54,6 +54,19 @@
         line-height: 0.4rem;
         position: relative;
       }
+      .addressMessage {
+        width: 90%;
+        display: inline-block;
+        .el-input {
+          width: 15%;
+          /deep/ .el-input__inner {
+            padding: 0 0.1rem;
+          }
+          &:last-child {
+            width: 30%;
+          }
+        }
+      }
     }
     .consigneeMessage {
       flex: 1;
@@ -66,6 +79,19 @@
         height: 0.4rem;
         line-height: 0.4rem;
         position: relative;
+      }
+      .addressMessage {
+        width: 90%;
+        display: inline-block;
+        .el-input {
+          width: 15%;
+          /deep/ .el-input__inner {
+            padding: 0 0.1rem;
+          }
+          &:last-child {
+            width: 30%;
+          }
+        }
       }
     }
     .commodityMessage {

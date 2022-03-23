@@ -16,33 +16,44 @@
         </div>
         <div class="sendName">
           姓名：<span v-show="!showUpdateSendMessageInput">{{
-            sendMessage.name
+            sendMessage.Name
           }}</span>
           <el-input
             v-show="showUpdateSendMessageInput"
-            v-model="sendMessage.name"
+            v-model="sendMessage.Name"
           ></el-input>
         </div>
         <div class="sendPhone">
           电话：<span v-show="!showUpdateSendMessageInput">{{
-            sendMessage.phone
+            sendMessage.Mobile
           }}</span>
           <el-input
             v-show="showUpdateSendMessageInput"
-            v-model="sendMessage.phone"
+            v-model="sendMessage.Mobile"
           ></el-input>
         </div>
         <div class="sendAddress">
-          地址：<span v-show="!showUpdateSendMessageInput">{{
-            sendMessage.address
-          }}</span>
-          <el-input
-            v-show="showUpdateSendMessageInput"
-            v-model="sendMessage.address"
-          ></el-input>
+          地址：<span v-show="!showUpdateSendMessageInput">
+            {{
+              sendMessage.ProvinceName +
+              sendMessage.CityName +
+              sendMessage.ExpAreaName +
+              sendMessage.Address
+            }}
+          </span>
+          <div class="addressMessage" v-show="showUpdateSendMessageInput">
+            省:
+            <el-input v-model="sendMessage.ProvinceName"></el-input>
+            市:
+            <el-input v-model="sendMessage.CityName"></el-input>
+            区:
+            <el-input v-model="sendMessage.ExpAreaName"></el-input>
+            地址:
+            <el-input v-model="sendMessage.Address"></el-input>
+          </div>
         </div>
       </div>
-      <div class="consigneeMessage">
+      <div class="consigneeMessage" v-if="commodityMessage">
         <div class="title">
           <span>收件人信息</span>
           <div class="buttonBox">
@@ -56,45 +67,58 @@
         </div>
         <div class="consigneeName">
           姓名：<span v-show="!showUpdateConsigneeMessageInput">
-            {{ consigneeMessage.name }}
+            {{ consigneeMessage.Name }}
           </span>
           <el-input
             v-show="showUpdateConsigneeMessageInput"
-            v-model="consigneeMessage.name"
+            v-model="consigneeMessage.Name"
           ></el-input>
         </div>
         <div class="consigneePhone">
           电话：<span v-show="!showUpdateConsigneeMessageInput">
-            {{ consigneeMessage.phone }}
+            {{ consigneeMessage.Mobile }}
           </span>
           <el-input
             v-show="showUpdateConsigneeMessageInput"
-            v-model="consigneeMessage.phone"
+            v-model="consigneeMessage.Mobile"
           ></el-input>
         </div>
         <div class="consigneeAddress">
           地址：<span v-show="!showUpdateConsigneeMessageInput">
-            {{ consigneeMessage.address }}
+            {{
+              consigneeMessage.ProvinceName +
+              consigneeMessage.CityName +
+              consigneeMessage.ExpAreaName +
+              consigneeMessage.Address
+            }}
           </span>
-          <el-input
-            v-show="showUpdateConsigneeMessageInput"
-            v-model="consigneeMessage.address"
-          ></el-input>
+          <div class="addressMessage" v-show="showUpdateConsigneeMessageInput">
+            省:
+            <el-input v-model="consigneeMessage.ProvinceName"></el-input>
+            市:
+            <el-input v-model="consigneeMessage.CityName"></el-input>
+            区:
+            <el-input v-model="consigneeMessage.ExpAreaName"></el-input>
+            地址:
+            <el-input v-model="consigneeMessage.Address"></el-input>
+          </div>
         </div>
       </div>
       <div class="commodityMessage">
-        <div class="title">商品信息</div>
+        <div class="title" v-if="commodityMessage">商品信息</div>
         <ul>
           <li v-for="(item, index) in commodityMessage" :key="index">
-            <span>{{ item.goodsName }}</span>
+            <span>{{ item.GoodsName }}</span>
             <span> x </span>
-            <span>{{ item.goodsquantity }}</span>
+            <span>{{ item.Goodsquantity }}</span>
           </li>
         </ul>
       </div>
     </main>
     <footer>
-      <el-button type="success">打印面单</el-button>
+      <el-button type="success" @click="sendPrintMessageToBank">
+        打印面单
+      </el-button>
       <el-button @click="clickCancelPrint">取消打印</el-button>
     </footer>
   </div>
@@ -103,6 +127,7 @@
 <script>
 import { mapMutations } from "vuex";
 export default {
+  props: ["sendPrintMessage"],
   data() {
     return {
       // 修改发件人信息,显示相关 input 框
@@ -111,47 +136,93 @@ export default {
       showUpdateConsigneeMessageInput: false,
       // 发件人信息
       sendMessage: {
-        name: "程先生",
-        phone: "1888888888",
-        address: "四川省泸州市龙马潭区龙南路649号",
+        Name: "程先生",
+        Mobile: "1888888888",
+        ProvinceName: "四川省",
+        CityName: "泸州市",
+        ExpAreaName: "龙马潭区",
+        Address: "龙南路649号",
       },
       // 收件人信息
-      consigneeMessage: {
-        name: "张三",
-        phone: "12222222222",
-        address: "四川省泸州市龙马潭区龙南路649号",
-      },
+      consigneeMessage: null,
       // 商品信息
-      commodityMessage: [
-        {
-          goodsName: "xxx",
-          goodsquantity: 1,
-        },
-        {
-          goodsName: "123",
-          goodsquantity: 1,
-        },
-        {
-          goodsName: "123",
-          goodsquantity: 1,
-        },
-      ],
+      commodityMessage: null,
+      // 订单号
+      orderCode: null,
     };
   },
-  mounted() {},
+  mounted() {
+    this.consigneeMessage = this.sendPrintMessage[0];
+    this.commodityMessage = this.sendPrintMessage[1];
+    this.orderCode = this.sendPrintMessage[2];
+  },
   methods: {
     ...mapMutations(["updateShowFaceSheet"]),
     // 修改收件人信息
     updateSendMessage() {
-      this.showUpdateSendMessageInput = !this.showUpdateSendMessageInput;
+      if (
+        this.sendMessage.Name === "" ||
+        this.sendMessage.Mobile === "" ||
+        this.sendMessage.ProvinceName === "" ||
+        this.sendMessage.CityName === "" ||
+        this.sendMessage.ExpAreaName === "" ||
+        this.sendMessage.Address === ""
+      ) {
+        this.$message({
+          type: "error",
+          message: "缺少发件人关键信息，请补充",
+          duration: 1000,
+        });
+      } else {
+        this.showUpdateSendMessageInput = !this.showUpdateSendMessageInput;
+      }
     },
     updateConsigneeMessage() {
-      this.showUpdateConsigneeMessageInput =
-        !this.showUpdateConsigneeMessageInput;
+      if (
+        this.consigneeMessage.name === "" ||
+        this.consigneeMessage.phone === "" ||
+        this.consigneeMessage.province === "" ||
+        this.consigneeMessage.city === "" ||
+        this.consigneeMessage.area === "" ||
+        this.consigneeMessage.address === ""
+      ) {
+        this.$message({
+          type: "error",
+          message: "缺少收件人关键信息，请补充",
+          duration: 1000,
+        });
+      } else {
+        this.showUpdateConsigneeMessageInput =
+          !this.showUpdateConsigneeMessageInput;
+      }
     },
     clickCancelPrint() {
       this.updateShowFaceSheet(false);
       // 将信息传递给子组件
+    },
+    // 打印面单按钮
+    sendPrintMessageToBank() {
+      if (
+        this.showUpdateSendMessageInput ||
+        this.showUpdateConsigneeMessageInput
+      ) {
+        this.$message({
+          type: "error",
+          message: "请确认表单信息",
+          duration: 1000,
+        });
+      } else {
+        const data = {
+          sendMessage: this.sendMessage,
+          consigneeMessage: this.consigneeMessage,
+          commodityMessage: this.commodityMessage,
+          orderCode: this.orderCode,
+        };
+        // console.log(data);
+        this.post("api/getPrint", data).then((res) => {
+          console.log(res);
+        });
+      }
     },
   },
 };
