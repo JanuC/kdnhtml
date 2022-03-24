@@ -143,12 +143,12 @@ export default {
       showUpdateConsigneeMessageInput: false,
       // 发件人信息
       sendMessage: {
-        Name: "程先生",
-        Mobile: "1888888888",
+        Name: "鸿正",
+        Mobile: "18681538636",
         ProvinceName: "四川省",
         CityName: "泸州市",
         ExpAreaName: "龙马潭区",
-        Address: "龙南路649号",
+        Address: "龙南路649号鸿正电商1楼展厅",
       },
       // 收件人信息
       consigneeMessage: null,

@@ -6,9 +6,9 @@ import Message from "element-ui";
 
 // 环境切换
 if (process.env.NODE_ENV == "development") {
-  axios.defaults.baseURL = "http://localhost:3000";
+  axios.defaults.baseURL = "http://api.ihongzheng.com:80";
 } else if (process.env.NODE_ENV == "production") {
-  axios.defaults.baseURL = "http://api.janu.com:3000";
+  axios.defaults.baseURL = "http://api.ihongzheng.com:80";
 }
 
 // 设置请求超时
