@@ -121,6 +121,13 @@
       </el-button>
       <el-button @click="clickCancelPrint">取消打印</el-button>
     </footer>
+    <div class="printBox" v-if="showPrintBox">
+      <div id="printMain" v-html="printMain"></div>
+      <div class="printButtonBox">
+        <el-button v-print="'#printMain'" type="success">打印</el-button>
+        <el-button @click="cancelPrint">取消</el-button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -149,6 +156,10 @@ export default {
       commodityMessage: null,
       // 订单号
       orderCode: null,
+      // 打印主题内容
+      printMain: null,
+      // 是否显示打印组件
+      showPrintBox: false,
     };
   },
   mounted() {
@@ -220,9 +231,25 @@ export default {
         };
         // console.log(data);
         this.post("api/getPrint", data).then((res) => {
-          console.log(res);
+          // console.log(res);
+          if (res.code === 200 && res.data.Success) {
+            // console.log(res.data.PrintTemplate);
+            this.printMain = res.data.PrintTemplate;
+            this.showPrintBox = true;
+          } else {
+            this.$message({
+              type: "error",
+              message: res.data.Reason,
+              duration: 1000,
+            });
+          }
         });
       }
+    },
+    // 取消打印
+    cancelPrint() {
+      this.showPrintBox = false;
+      this.updateShowFaceSheet(false);
     },
   },
 };

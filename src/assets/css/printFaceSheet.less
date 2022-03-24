@@ -112,4 +112,33 @@
     max-height: 0.4rem;
     text-align: right;
   }
+  .printBox {
+    width: 100%;
+    height: 100%;
+    background-color: #eee;
+    padding-top: 0.1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    #printMain {
+      width: 100%;
+      // min-height: 8rem;
+      // height: 500px;
+      // overflow: hidden;
+      // margin: 0 auto;
+      padding: 0.2rem;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-15%);
+    }
+    .printButtonBox {
+      position: absolute;
+      left: 50%;
+      bottom: 0.2rem;
+      transform: translateX(-50%);
+      .el-button {
+        margin: 0 0.4rem;
+      }
+    }
+  }
 }

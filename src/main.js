@@ -8,12 +8,14 @@ import { apiAddress } from "./request/api";
 import timeFormate from "./utils/timeFormate";
 import changePages from "./utils/changePages";
 import inputFilterOrder from "./utils/inputFilterOrder";
+import Print from "vue-print-nb";
 
 Vue.prototype.post = apiAddress;
 Vue.prototype.timeFormate = timeFormate;
 Vue.prototype.changePages = changePages;
 Vue.prototype.inputFilterOrder = inputFilterOrder;
 Vue.use(ElementUI);
+Vue.use(Print);
 
 Vue.config.productionTip = false;
 
